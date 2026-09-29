@@ -6,9 +6,26 @@ import { prisma } from "@/lib/db/prisma";
 import { jsonError, jsonSuccess } from "@/lib/utils/api-response";
 import { adminProvisioningSchema } from "@/lib/validation/auth";
 
+function getAllowedOrigins(request: NextRequest) {
+  return new Set(
+    [
+      request.url,
+      process.env.NEXT_PUBLIC_APP_URL,
+      process.env.RENDER_EXTERNAL_URL,
+    ].flatMap((value) => {
+      if (!value) return [];
+      try {
+        return [new URL(value).origin];
+      } catch {
+        return [];
+      }
+    })
+  );
+}
+
 export async function POST(request: NextRequest) {
   const origin = request.headers.get("origin");
-  if (!origin || origin !== new URL(request.url).origin) {
+  if (!origin || !getAllowedOrigins(request).has(origin)) {
     return jsonError("Request origin is not allowed", 403);
   }
 
