@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 222 47% 18%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 173 58% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 173 58% 39%;
+    --radius: 0.75rem;
+    --font-serif: "Georgia", "Times New Roman", serif;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 173 58% 45%;
+    --accent-foreground: 222 47% 7%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 173 58% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  .prose-blog {
+    @apply max-w-none text-[1.05rem] leading-8 text-foreground/90;
+  }
+
+  .prose-blog h1,
+  .prose-blog h2,
+  .prose-blog h3 {
+    @apply font-serif font-semibold tracking-tight text-foreground mt-8 mb-4;
+  }
+
+  .prose-blog h2 {
+    @apply text-2xl;
+  }
+
+  .prose-blog p {
+    @apply mb-5;
+  }
+
+  .prose-blog ul,
+  .prose-blog ol {
+    @apply my-5 pl-6 space-y-2;
+  }
+
+  .prose-blog blockquote {
+    @apply border-l-4 border-accent pl-4 italic text-muted-foreground;
+  }
+
+  .prose-blog pre {
+    @apply rounded-lg bg-secondary p-4 overflow-x-auto text-sm;
+  }
+
+  .prose-blog code {
+    @apply rounded bg-secondary px-1.5 py-0.5 text-sm font-mono;
+  }
+
+  .prose-blog img {
+    @apply rounded-xl my-6;
+  }
+
+  .prose-blog a {
+    @apply text-accent underline-offset-4 hover:underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

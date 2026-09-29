@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+  READER
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(EMPLOYEE)
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  blogs    Blog[]
+  comments Comment[]
+  likes    Like[]
+
+  @@index([role])
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogs Blog[]
+}
+
+model Tag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogs BlogTag[]
+}
+
+model Blog {
+  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
+  title               String
+  slug                String     @unique
+  content             String
+  excerpt             String?
+  coverImage          String?
+  coverImagePublicId  String?
+  localImagePath      String?
+  status              BlogStatus @default(DRAFT)
+  authorId            String     @db.ObjectId
+  categoryId          String?    @db.ObjectId
+  views               Int        @default(0)
+  readingTimeMinutes  Int        @default(1)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  publishedAt         DateTime?
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id])
+  tags     BlogTag[]
+  blogViews BlogView[]
+  comments Comment[]
+  likes    Like[]
+
+  @@index([status])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([title])
+  @@index([publishedAt])
+}
+
+model BlogTag {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  blogId String @db.ObjectId
+  tagId  String @db.ObjectId
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([blogId, tagId])
+  @@index([tagId])
+}
+
+model BlogView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  blogId    String   @db.ObjectId
+  visitorId String
+  viewedAt  DateTime @default(now())
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@index([blogId, visitorId])
+  @@index([viewedAt])
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  blogId    String   @db.ObjectId
+  authorId  String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blog   Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([blogId])
+}
+
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  blogId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([blogId, userId])
+}
