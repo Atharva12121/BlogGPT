@@ -14,11 +14,13 @@ Published articles support categories, tags, view tracking, likes, comments, rel
 
 ## Technology
 
-- Next.js App Router with React and TypeScript
-- MongoDB with Prisma ORM
-- Tailwind CSS and Radix UI
-- Gemini API for optional AI features
-- Cloudinary and local disk adapters for image storage
+- **Next.js App Router, React, and TypeScript** provide server-rendered pages, API routes, and typed UI components in one application.
+- **MongoDB with Prisma ORM** stores users, blogs, categories, tags, and reader activity while providing typed database access.
+- **Tailwind CSS and Radix UI** support responsive styling and accessible interface primitives.
+- **TipTap** provides the rich-text blog editor and its formatting extensions.
+- **Gemini API** powers optional writing and reading assistance; the provider can reject requests when its model is overloaded or the account quota is reached.
+- **Cloudinary and a local disk adapter** provide hosted and local image storage options.
+- **bcryptjs and signed JWTs** support password hashing and authenticated sessions.
 
 ## Requirements
 
@@ -121,6 +123,38 @@ Open `/admin-setup` to provision the first administrator. Administrators can cre
 | `npm run db:studio` | Open Prisma Studio for database inspection. |
 
 The seed script is disabled in production and restricted to local MongoDB by default. It creates demo content and may create demo accounts when the relevant seed variables are set. Do not run it against production data. Setting `ALLOW_REMOTE_DEMO_SEED=true` explicitly permits remote seeding and should only be done when that is intended.
+
+## Features: Implemented and Not Implemented
+
+### Implemented
+
+- Role-based reader, employee, and administrator accounts with password hashing and protected dashboard/API routes.
+- Admin employee management, blog moderation, category/tag management, and analytics.
+- Employee blog creation and editing, drafts, publishing, automatic slug generation, and draft auto-save.
+- Rich-text editing for headings, bold/italic/underline, lists, links, images, code blocks, quotes, and dividers.
+- Cover-image and editor-image uploads with server-side image validation and optimization.
+- Public blog listings and detail pages, search and category/tag filters, related posts, reading-time estimates, and pagination.
+- Reader likes and comments, view tracking, and PDF downloads.
+- Admin analytics with date filters and CSV/Excel report exports.
+- Dark mode.
+- Optional Gemini AI writing tools, custom instructions, copyable results, and public blog reading assistance.
+- Demo seed data for sample accounts, blogs, categories, tags, and reader activity.
+
+### Not Implemented
+
+- Scheduled publishing. Employees cannot currently select a future publication time.
+- Forgot-password recovery with an email OTP.
+- Google sign-in or other OAuth login.
+- Automatic fallback to a second AI provider when Gemini is unavailable.
+
+## Known Limitations
+
+- AI requests depend on Gemini availability, model access, and account quota. The app reports overload, timeout, and quota errors, but cannot make an unavailable or quota-limited provider succeed.
+- The `both` image-storage mode requires valid Cloudinary credentials and a writable local upload directory. It reports a failure if either storage destination fails. The Cloudinary account used during setup returned HTTP 403, so its credentials and upload permissions need verification before relying on this mode.
+- Local image storage writes to `public/uploads`. This is suitable for local development, but deployment platforms with ephemeral or read-only filesystems need persistent storage configured; use Cloudinary-only storage there if local persistence is unavailable.
+- The admin provisioning page requires `ADMIN_PROVISIONING_KEY`. Rotate or remove the key after initial setup if further administrator provisioning is not needed.
+- The demo seed is blocked for remote databases unless `ALLOW_REMOTE_DEMO_SEED=true` is explicitly set. It is not intended for production and can add many sample records.
+- There is no configured automated test suite. TypeScript checking is available with `npx tsc --noEmit`; the lint command may require a compatible ESLint configuration.
 
 ## Application Structure
 
